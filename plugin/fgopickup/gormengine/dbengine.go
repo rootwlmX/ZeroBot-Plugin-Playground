@@ -1,21 +1,21 @@
-package fgopickup
+package gormengine
 
 import (
 	"github.com/jinzhu/gorm"
 	"os"
 )
 
-var _dbEngine *orm
+var _dbEngine *Orm
 
-type orm struct {
+type Orm struct {
 	*gorm.DB
 }
 
-func getOrmEngine() *orm {
+func GetOrmEngine() *Orm {
 	return _dbEngine
 }
 
-func initialize(dbpath string) *gorm.DB {
+func Initialize(dbpath string) *gorm.DB {
 	var err error
 	if _, err = os.Stat(dbpath); err != nil || os.IsNotExist(err) {
 		f, err := os.Create(dbpath)
@@ -33,8 +33,8 @@ func initialize(dbpath string) *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
-	gdb.AutoMigrate(&pickup{}, &pickupServant{}, &servant{})
-	orm := new(orm)
+	//gdb.AutoMigrate(&model.Pickup{}, &model.PickupServant{}, &model.Servant{})
+	orm := new(Orm)
 	orm.DB = gdb
 	_dbEngine = orm
 	return gdb

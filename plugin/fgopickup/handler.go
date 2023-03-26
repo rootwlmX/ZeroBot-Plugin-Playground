@@ -26,7 +26,21 @@ func listPickups(ctx *zero.Ctx) {
 
 func pickupDetail(ctx *zero.Ctx) {
 	pickupId := ctx.State["args"].(string)
-	ctx.Send(pickupId)
+	service := service{}
+	id, err := strconv.Atoi(pickupId)
+	if err != nil {
+		ctx.Send("错误的参数")
+	}
+	servants := service.getPickupDetail(id)
+
+	msg := message.Message{}
+	msg = append(msg, ctxext.FakeSenderForwardNode(ctx, message.Text("卡池包含以下UP从者")))
+	for _, servant := range servants {
+		avatar := message.Image(servant.Avatar)
+		name := message.Text(servant.Name)
+		msg = append(msg, ctxext.FakeSenderForwardNode(ctx, avatar, name))
+	}
+	ctx.Send(msg)
 }
 
 func parseTime(timeInSeconds int64) string {
